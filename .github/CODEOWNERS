@@ -1,0 +1,6 @@
+# CODEOWNERS — ajusta usuarios reales de tu org
+# Sintaxis: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+*       @Mildreth-SC
+/src/   @Mildreth-SC
+/docs/  @Mildreth-SC

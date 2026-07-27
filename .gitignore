@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets — nunca subir credenciales
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+secrets/
+
+# Logs y cobertura
+logs/
+*.log
+npm-debug.log*
+coverage/
+.nyc_output/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build
+dist/
+build/
+tmp/
+temp/
