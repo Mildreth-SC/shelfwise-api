@@ -1,1 +1,1 @@
-stock = 220
+stock = 200
