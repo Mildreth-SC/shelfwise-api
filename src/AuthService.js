@@ -1,7 +1,6 @@
 ﻿/**
- * AuthService v2.3 — bcrypt + lockout + 2FA por SMS.
- * Tras validar contraseña, exige código de 6 dígitos (TTL 5 min, máx. 3 intentos).
- * Endpoint: POST /auth/login/verify-2fa { userId, codigo }
+ * AuthService v2.4-hotfix — bcrypt + lockout + 2FA SMS.
+ * Post-incidente: TTL 60s y expiración solo con timestamps UTC (Date.now).
  */
 const bcrypt = require('bcrypt');
 const { SmsService } = require('./SmsService');
@@ -9,7 +8,7 @@ const { SmsService } = require('./SmsService');
 const BCRYPT_ROUNDS = 12;
 const MAX_INTENTOS_FALLIDOS = 5;
 const TIEMPO_BLOQUEO_MIN = 15;
-const TTL_2FA_SEGUNDOS = 300; // 5 minutos
+const TTL_2FA_SEGUNDOS = 60; // hotfix: 60s (más conservador que 30s)
 const MAX_INTENTOS_2FA = 3;
 
 class AuthService {
@@ -20,7 +19,6 @@ class AuthService {
       ...u,
     }));
     this.sms = smsService;
-    /** @type {Map<string, { codigo: string, expiraEn: number, intentos: number }>} */
     this.retos2FA = new Map();
   }
 
@@ -32,9 +30,7 @@ class AuthService {
     return String(Math.floor(100000 + Math.random() * 900000));
   }
 
-  /**
-   * Calcula expiración en epoch ms (UTC / Date.now).
-   */
+  /** Expiración exclusivamente con epoch UTC (Date.now). */
   calcularExpiracion(ttlSegundos = TTL_2FA_SEGUNDOS) {
     return Date.now() + ttlSegundos * 1000;
   }
@@ -91,9 +87,6 @@ class AuthService {
     };
   }
 
-  /**
-   * Segunda pantalla: verificación del código SMS.
-   */
   verify2FA(usuarioId, codigo) {
     const reto = this.retos2FA.get(usuarioId);
     if (!reto) {
