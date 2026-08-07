@@ -1,5 +1,5 @@
 ﻿/**
- * AuthService v2.4 (TTL bug) — bcrypt + lockout + 2FA por SMS.
+ * AuthService v2.3 — bcrypt + lockout + 2FA por SMS.
  * Tras validar contraseña, exige código de 6 dígitos (TTL 5 min, máx. 3 intentos).
  * Endpoint: POST /auth/login/verify-2fa { userId, codigo }
  */
@@ -9,7 +9,7 @@ const { SmsService } = require('./SmsService');
 const BCRYPT_ROUNDS = 12;
 const MAX_INTENTOS_FALLIDOS = 5;
 const TIEMPO_BLOQUEO_MIN = 15;
-const TTL_2FA_SEGUNDOS = 30; // BUG v2.4: reducido a 30s
+const TTL_2FA_SEGUNDOS = 300; // 5 minutos
 const MAX_INTENTOS_2FA = 3;
 
 class AuthService {
@@ -33,12 +33,10 @@ class AuthService {
   }
 
   /**
-   * BUG v2.4: mezcla Date.now() (UTC epoch) con offset local (-5h),
-   * por lo que expiraEn queda en el pasado y todo código parece vencido.
+   * Calcula expiración en epoch ms (UTC / Date.now).
    */
   calcularExpiracion(ttlSegundos = TTL_2FA_SEGUNDOS) {
-    const OFFSET_LOCAL_MS = -5 * 60 * 60 * 1000; // simula hora local vs UTC
-    return Date.now() + OFFSET_LOCAL_MS + ttlSegundos * 1000;
+    return Date.now() + ttlSegundos * 1000;
   }
 
   async login(email, password) {
@@ -141,4 +139,3 @@ module.exports = {
   TTL_2FA_SEGUNDOS,
   MAX_INTENTOS_2FA,
 };
-
