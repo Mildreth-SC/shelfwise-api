@@ -1,6 +1,6 @@
-﻿{
+{
   "name": "shelfwise-api",
-  "version": "2.3.0",
+  "version": "2.4.1",
   "description": "ShelfWise API — préstamos + AuthService (login, bcrypt, 2FA) — ejemplo académico",
   "main": "src/index.js",
   "scripts": {
